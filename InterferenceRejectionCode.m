@@ -72,18 +72,13 @@ f                       = [0:Nfft2 -Nfft2+1:-1]'/Nfft;
 df                      = f(2)-f(1);
 %---
 Array                   = 0:M-1; 
-%--------------- srcPHAT params -----------------------------
-lsb = TarPos - [1 1 0];
-usb = TarPos + [1 1 0];
-
+% 
 %% Plot Params
 linewd                  = 0.8;
 hcfontsize              = 20;
 MarkerSize              = 9;
 %% Flags
-IsPlotPolarFlag         = 1;   
-IsSpeechSigFlag         = 0;
-ColoredNoiseFlag        = 0;
+IsPlotPolarFlag         = 1;    
 %% Funcs
 AngBetweenVecs          = @(u,v) ( acos(real(u/norm(u)*v'/norm(v)))*180/pi ) ;
 DistBetweenVecsFunc     = @(v,u) ( norm(v/norm(v)*(exp(-1j*angle(v(1)))*exp(1j*angle(u(1)))) -u/norm(u)) );
@@ -127,16 +122,7 @@ NormFactor2              = norm(TarSig2);
 TarSigClean2             = TarSig2  / NormFactor2;
 TarSig2                  = TargetGain2 * TarSig2 / NormFactor2;
 
-if IsSpeechSigFlag
-%     
-    IndxForSigStart     = (randi((size(SpeechMat,1)/KSigSamples-2)*KSigSamples)+KSigSamples/2);
-    IndxForSig          = IndxForSigStart:IndxForSigStart + KSigSamples-1;
-    SpeechInd           = randi(size(SpeechMat,2),1,KInterferenceSources);
-    InterSigClean       = SpeechMat(IndxForSig,SpeechInd);
-else
-    InterSigClean           = randn(KSigSamples,KInterferenceSources);%/ NormFactor;
-%  
-end
+InterSigClean           = randn(KSigSamples,KInterferenceSources);%/ NormFactor;
 
 for it=1:KInterferenceSources
     InterSigClean(:,it) = InterSigClean(:,it) / norm(InterSigClean(:,it));
@@ -176,13 +162,8 @@ for tp =1:KTarPos
     
     TarSigZeroPad           = [TarSig ; zeros(KFiltSamples,1)];
     TarSigZeroPad2          = [TarSig2 ; zeros(KFiltSamples,1)];
-    InterSigZeroPad         = [InterSig ; zeros(KFiltSamples,KInterferenceSources)];
+    InterSigZeroPad         = [InterSig ; zeros(KFiltSamples,KInterferenceSources)];    
     
-    if ColoredNoiseFlag
-        NoiseMatTmp                        = randn(KSigSamples,KAntennas);
-        M                               = randn(KAntennas);
-        NoiseMat                        = NoiseMatTmp*M;
-    end
     for MicInd = 1:KAntennas       
         
         SigTarAtArray                   = filter(hTarToArrMat(MicInd,:)     ,1,TarSigZeroPad(:,1));        
@@ -196,12 +177,8 @@ for tp =1:KTarPos
  
         SigTarAtArray2                  = SigTarAtArray2(1:KSigSamples);
         SigInterAtArrayMatTrim          = SigInterAtArrayMat(1:KSigSamples,:);
-        SigInterAtArrayMatMasked        = SigInterAtArrayMatTrim.*IndicatorBig;
-        if ColoredNoiseFlag
-            NoiseVec                        = NoiseMat(:,MicInd);
-        else
-            NoiseVec                        = randn(KSigSamples,1);
-        end
+        SigInterAtArrayMatMasked        = SigInterAtArrayMatTrim.*IndicatorBig;        
+        NoiseVec                        = randn(KSigSamples,1);         
         
         KFactNoise                      = norm(NoiseVec);
         KFactSig                        = norm(SigTarAtArray);
