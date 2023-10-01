@@ -3,31 +3,31 @@
 
 %% Loading data
 if IsMCforBeta
-    MeanSirMeanMLR_MC_Sir0SNR50_Beta = LoadDataMC(['MeanSirMeanMLR_MC_Sir1SNR50_Beta_KScen' num2str(KScenarios)],1);
-    MeanSirMeanMLR_MC_Sir6SNR50_Beta = LoadDataMC(['MeanSirMeanMLR_MC_Sir4SNR50_Beta_KScen' num2str(KScenarios)],1);
-    MeanSirMeanMLR_MC_Sir10SNR50_Beta = LoadDataMC(['MeanSirMeanMLR_MC_Sir10SNR50_Beta_KScen' num2str(KScenarios)],1);
-    MeanSirMeanMLE_MC_Sir0SNR50_Beta = LoadDataMC(['MeanSirMeanMLE_MC_Sir1SNR50_Beta_KScen' num2str(KScenarios)],1);
-    MeanSirMeanMLE_MC_Sir6SNR50_Beta = LoadDataMC(['MeanSirMeanMLE_MC_Sir4SNR50_Beta_KScen' num2str(KScenarios)],1);
-    MeanSirMeanMLE_MC_Sir10SNR50_Beta = LoadDataMC(['MeanSirMeanMLE_MC_Sir10SNR50_Beta_KScen' num2str(KScenarios)],1);
+    MeanSirMeanMLR_MC_Sir0SNR20_Beta = LoadDataMC(['MeanSirMeanMLR_MC_Sir1SNR20_Beta_KScen' num2str(KScenarios)],1);
+    MeanSirMeanMLR_MC_Sir6SNR20_Beta = LoadDataMC(['MeanSirMeanMLR_MC_Sir4SNR20_Beta_KScen' num2str(KScenarios)],1);
+    MeanSirMeanMLR_MC_Sir10SNR20_Beta = LoadDataMC(['MeanSirMeanMLR_MC_Sir10SNR20_Beta_KScen' num2str(KScenarios)],1);
+    MeanSirMeanMLE_MC_Sir0SNR20_Beta = LoadDataMC(['MeanSirMeanMLE_MC_Sir1SNR20_Beta_KScen' num2str(KScenarios)],1);
+    MeanSirMeanMLE_MC_Sir6SNR20_Beta = LoadDataMC(['MeanSirMeanMLE_MC_Sir4SNR20_Beta_KScen' num2str(KScenarios)],1);
+    MeanSirMeanMLE_MC_Sir10SNR20_Beta = LoadDataMC(['MeanSirMeanMLE_MC_Sir10SNR20_Beta_KScen' num2str(KScenarios)],1);
 else
-    MeanSirMeanMLE_MC_Sir0SNR50_Epsilon = LoadDataMC(['MeanSirMeanMLE_MC_Sir1SNR50_Epsilon_KScen' num2str(KScenarios)],1);
-    MeanSirMeanMLR_MC_Sir0SNR50_Epsilon = LoadDataMC(['MeanSirMeanMLR_MC_Sir1SNR50_Epsilon_KScen' num2str(KScenarios)],1);
-    MeanSirMeanMLE_MC_Sir6SNR50_Epsilon = LoadDataMC(['MeanSirMeanMLE_MC_Sir4SNR50_Epsilon_KScen' num2str(KScenarios)],1);
-    MeanSirMeanMLR_MC_Sir6SNR50_Epsilon = LoadDataMC(['MeanSirMeanMLR_MC_Sir4SNR50_Epsilon_KScen' num2str(KScenarios)],1);
-    MeanSirMeanMLE_MC_Sir10SNR50_Epsilon = LoadDataMC(['MeanSirMeanMLE_MC_Sir10SNR50_Epsilon_KScen' num2str(KScenarios)],1);
-    MeanSirMeanMLR_MC_Sir10SNR50_Epsilon = LoadDataMC(['MeanSirMeanMLR_MC_Sir10SNR50_Epsilon_KScen' num2str(KScenarios)],1);
+    MeanSirMeanMLE_MC_Sir0SNR20_Epsilon = LoadDataMC(['MeanSirMeanMLE_MC_Sir1SNR20_Epsilon_KScen' num2str(KScenarios)],1);
+    MeanSirMeanMLR_MC_Sir0SNR20_Epsilon = LoadDataMC(['MeanSirMeanMLR_MC_Sir1SNR20_Epsilon_KScen' num2str(KScenarios)],1);
+    MeanSirMeanMLE_MC_Sir6SNR20_Epsilon = LoadDataMC(['MeanSirMeanMLE_MC_Sir4SNR20_Epsilon_KScen' num2str(KScenarios)],1);
+    MeanSirMeanMLR_MC_Sir6SNR20_Epsilon = LoadDataMC(['MeanSirMeanMLR_MC_Sir4SNR20_Epsilon_KScen' num2str(KScenarios)],1);
+    MeanSirMeanMLE_MC_Sir10SNR20_Epsilon = LoadDataMC(['MeanSirMeanMLE_MC_Sir10SNR20_Epsilon_KScen' num2str(KScenarios)],1);
+    MeanSirMeanMLR_MC_Sir10SNR20_Epsilon = LoadDataMC(['MeanSirMeanMLR_MC_Sir10SNR20_Epsilon_KScen' num2str(KScenarios)],1);
 end
 %%
 if IsMCforBeta
-    BetaRiemMAt     = [MeanSirMeanMLR_MC_Sir0SNR50_Beta'     MeanSirMeanMLR_MC_Sir6SNR50_Beta'     MeanSirMeanMLR_MC_Sir10SNR50_Beta' ];
-    BetaEucMAt      = [MeanSirMeanMLE_MC_Sir0SNR50_Beta'     MeanSirMeanMLE_MC_Sir6SNR50_Beta'     MeanSirMeanMLE_MC_Sir10SNR50_Beta' ];
+    BetaRiemMAt     = [MeanSirMeanMLR_MC_Sir0SNR20_Beta'     MeanSirMeanMLR_MC_Sir6SNR20_Beta'     MeanSirMeanMLR_MC_Sir10SNR20_Beta' ];
+    BetaEucMAt      = [MeanSirMeanMLE_MC_Sir0SNR20_Beta'     MeanSirMeanMLE_MC_Sir6SNR20_Beta'     MeanSirMeanMLE_MC_Sir10SNR20_Beta' ];
 else
-    EpsilonRiemMAt  = [MeanSirMeanMLR_MC_Sir0SNR50_Epsilon'  MeanSirMeanMLR_MC_Sir6SNR50_Epsilon'  MeanSirMeanMLR_MC_Sir10SNR50_Epsilon' ];
-    EpsilonEucMAt   = [MeanSirMeanMLE_MC_Sir0SNR50_Epsilon'  MeanSirMeanMLE_MC_Sir6SNR50_Epsilon'  MeanSirMeanMLE_MC_Sir10SNR50_Epsilon' ];
+    EpsilonRiemMAt  = [MeanSirMeanMLR_MC_Sir0SNR20_Epsilon'  MeanSirMeanMLR_MC_Sir6SNR20_Epsilon'  MeanSirMeanMLR_MC_Sir10SNR20_Epsilon' ];
+    EpsilonEucMAt   = [MeanSirMeanMLE_MC_Sir0SNR20_Epsilon'  MeanSirMeanMLE_MC_Sir6SNR20_Epsilon'  MeanSirMeanMLE_MC_Sir10SNR20_Epsilon' ];
 end
 %%
 BetaVec         = [0.15 0.2 0.25 0.3 0.35 0.4];
-EpsilonVec      = fliplr(10.^(-([20 30 40 50])/20));
+EpsilonVec      = fliplr(10.^(-([20 30 40 50]-30)/20));
 %% Plot Params
 linewd                  = 0.8;
 hcfontsize              = 20;
@@ -60,6 +60,7 @@ if IsMCforBeta
     set(gca, 'FontSize', hcfontsize/1.5);
     set(gca, 'LineWidth', linewd);
     box on ; grid on
+    saveas(gcf,fullfile('results', 'Fig6Top_SirForDifferentBeta.jpg'))
 else
     MarkerVec = ['p','o','<','s','x'];
     AlphaVec = [1 0.8 0.6 0.4 0.35];
@@ -84,6 +85,7 @@ else
     set(gca, 'FontSize', hcfontsize/1.5);
     set(gca, 'LineWidth', linewd);
     box on ; grid on
+    saveas(gcf,fullfile('results', 'Fig6Bottom_SirForDifferentSnr.jpg'))
 end
 %%
 

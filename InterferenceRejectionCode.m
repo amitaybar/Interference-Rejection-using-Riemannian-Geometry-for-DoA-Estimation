@@ -2,7 +2,7 @@
 % !!! Please note that the main file is LoopWrapper.m !!!
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%
-addpath(fullfile(pwd,'RIR','RIR-Generator-master'));
+% addpath(fullfile(pwd,'RIR','RIR-Generator-master'));
 addpath(fullfile(pwd,'STFT'));
 %%
 %% Colors definition
@@ -17,11 +17,11 @@ ThetaLeftDeg            = 20;
 ThetaRightDeg           = 160;
 %
 KFramesPerInterference  = 0;
-ActiveProbaility        = 0.30;                                                              
-KAntennas               = 12;                                                                 
+ActiveProbaility        = 0.30;  
+KAntennas               = 12;   
 MidMic                  = ceil(KAntennas/2);                                                 
 M                       = KAntennas;
-KFramesForCovEst        = 16;                                                                
+KFramesForCovEst        = 16; 
 KFramesForCovEstWithOverlap = KFramesForCovEst*2-1;
 BasicSize               = 1024;
 KSigSamples             = KLargeFrames*(KFramesForCovEst)*BasicSize;                        
@@ -35,7 +35,7 @@ KSignals4MUSIC          = 1;
 TargetGain              = 1;
 InputSir                = 20*log10(TargetGain /mean(InterferenceAmpGain));
 % ----------------noise params------------------------
-Snr_dB                  = 50;  
+Snr_dB                  = 20;%50;  
 Epsilon                 = 1/10^(Snr_dB / 20);
 %----------------Acoustic Filter length----------------
 KFiltSamples            = 2*BasicSize;
@@ -82,6 +82,8 @@ hcfontsize              = 20;
 MarkerSize              = 9;
 %% Flags
 IsPlotPolarFlag         = 1;   
+IsSpeechSigFlag         = 0;
+ColoredNoiseFlag        = 0;
 %% Funcs
 AngBetweenVecs          = @(u,v) ( acos(real(u/norm(u)*v'/norm(v)))*180/pi ) ;
 DistBetweenVecsFunc     = @(v,u) ( norm(v/norm(v)*(exp(-1j*angle(v(1)))*exp(1j*angle(u(1)))) -u/norm(u)) );
@@ -101,7 +103,7 @@ if KInterferenceSources > 2
 end
 %% Interferences on a circle
 ThetaInterPosRandDegVec = ThetaLeftDeg + (ThetaRightDeg - ThetaLeftDeg)*rand(KInterferenceSources,1);
-
+% 
 ThetaInterPosRandRadVec = ThetaInterPosRandDegVec*pi/180;
 InterPos                = repmat([MidArrayPos(1) MidArrayPos(2) 0],KInterferenceSources,1) + [RSources*cos(ThetaInterPosRandRadVec) RSources*sin(ThetaInterPosRandRadVec) 0.5+2.5*rand(KInterferenceSources,1)];
 ThetaTarInterVec        = ThetaInterPosRandDegVec';   
@@ -114,16 +116,28 @@ end
 
 %% Creating the signals 
 TarSig                  = randn(KSigSamples,1);
+
 NormFactor              = norm(TarSig);
 TarSigClean             = TarSig  / NormFactor;
 TarSig                  = TargetGain * TarSig / NormFactor;
 
 TarSig2                  = randn(KSigSamples,1);
+
 NormFactor2              = norm(TarSig2);
 TarSigClean2             = TarSig2  / NormFactor2;
 TarSig2                  = TargetGain2 * TarSig2 / NormFactor2;
 
-InterSigClean           = randn(KSigSamples,KInterferenceSources);%/ NormFactor;
+if IsSpeechSigFlag
+%     
+    IndxForSigStart     = (randi((size(SpeechMat,1)/KSigSamples-2)*KSigSamples)+KSigSamples/2);
+    IndxForSig          = IndxForSigStart:IndxForSigStart + KSigSamples-1;
+    SpeechInd           = randi(size(SpeechMat,2),1,KInterferenceSources);
+    InterSigClean       = SpeechMat(IndxForSig,SpeechInd);
+else
+    InterSigClean           = randn(KSigSamples,KInterferenceSources);%/ NormFactor;
+%  
+end
+
 for it=1:KInterferenceSources
     InterSigClean(:,it) = InterSigClean(:,it) / norm(InterSigClean(:,it));
 end
@@ -163,7 +177,12 @@ for tp =1:KTarPos
     TarSigZeroPad           = [TarSig ; zeros(KFiltSamples,1)];
     TarSigZeroPad2          = [TarSig2 ; zeros(KFiltSamples,1)];
     InterSigZeroPad         = [InterSig ; zeros(KFiltSamples,KInterferenceSources)];
-     
+    
+    if ColoredNoiseFlag
+        NoiseMatTmp                        = randn(KSigSamples,KAntennas);
+        M                               = randn(KAntennas);
+        NoiseMat                        = NoiseMatTmp*M;
+    end
     for MicInd = 1:KAntennas       
         
         SigTarAtArray                   = filter(hTarToArrMat(MicInd,:)     ,1,TarSigZeroPad(:,1));        
@@ -178,9 +197,15 @@ for tp =1:KTarPos
         SigTarAtArray2                  = SigTarAtArray2(1:KSigSamples);
         SigInterAtArrayMatTrim          = SigInterAtArrayMat(1:KSigSamples,:);
         SigInterAtArrayMatMasked        = SigInterAtArrayMatTrim.*IndicatorBig;
-        NoiseVec                        = randn(KSigSamples,1);
+        if ColoredNoiseFlag
+            NoiseVec                        = NoiseMat(:,MicInd);
+        else
+            NoiseVec                        = randn(KSigSamples,1);
+        end
+        
         KFactNoise                      = norm(NoiseVec);
-        NoiseVec                        = Epsilon*randn(KSigSamples,1) / KFactNoise; %
+        KFactSig                        = norm(SigTarAtArray);
+        NoiseVec                        = Epsilon*NoiseVec / KFactNoise * KFactSig; %%         
         
         SigForGammaTimeDomain(MicInd,:) = SigTarAtArray2 + SigTarAtArray + sum(SigInterAtArrayMatMasked,2) + NoiseVec;
         SigForGammaStft                 = stft(SigForGammaTimeDomain(MicInd,:),WinLength);
@@ -199,7 +224,7 @@ for tp =1:KTarPos
     Gamma2 = squeeze(GammaTensor(:,:,2));
     %% Computing spectrum
     % 
-    ThetaVec     	= linspace(0,180,1e4+1); % 
+    ThetaVec     	= linspace(0,180,1e3+1); % 
     Gamma_R      	= RiemannianMean(GammaTensor);
     Gamma_E     	= mean(GammaTensor,3);   
     %---------------------Computing Gamma_P - the intersection method------
@@ -305,12 +330,11 @@ for tp =1:KTarPos
     DirectivityIntersect(tp)        = DirectivityCalcFunc(real(IntersectSpectrum),ThetaTarDegInd,DeltaThetaRad);
     %% Extracting directions 
     ThetaEst_E(tp)                  = DoAFromSpectrumFunc(ThetaVec,MLSpectrumOfGamma_E);
+%      
     ThetaEst_R(tp)                  = DoAFromSpectrumFunc(ThetaVec,MLSpectrumOfGamma_R);
+%      
     ThetaEst_Intersect(tp)          = DoAFromSpectrumFunc(ThetaVec,IntersectSpectrum);
-    %-----src PHAT-----
-    SigForSrcPhat                   = transpose(SigForGammaTimeDomain);    
-    [finalpos,finalsrp,finalfe]     = srplems(SigForSrcPhat, MicPosMat, fs, lsb, usb);
-    ThetaEst_srcPHAT(tp)            = AngBetweenVecs(finalpos        - MicPosMat(MidMic,:),ArrayVec);
+    
     %%
     if IsPlotPolarFlag && Mscen==1 && (tp== 5) && scen==1 %          
         PolarSpectrumPlot;
@@ -319,7 +343,7 @@ end % tp
 DirectionError_E        = (ThetaEst_E - ThetaTarDegVec);
 DirectionError_R        = (ThetaEst_R - ThetaTarDegVec);
 DirectionError_Intersect        = (ThetaEst_Intersect - ThetaTarDegVec);
-DirectionError_srcPHAT  = (ThetaEst_srcPHAT - ThetaTarDegVec);
+% 
 
 %%
 if (Mscen == 1 || Mscen == 12) && scen==1
@@ -332,15 +356,15 @@ if (Mscen == 1 || Mscen == 12) && scen==1
     h = plot(ThetaTarDegVec,ThetaEst_Intersect,'p','MarkerSize',13);
     set(h, 'MarkerFaceColor', get(h,'Color'));
     %      
-    h2 = plot(ThetaTarDegVec,ThetaEst_srcPHAT,'>','MarkerSize',9);
-    set(h2, 'MarkerFaceColor', get(h2,'Color'));
+ 
     plot(ThetaTarDegVec,ThetaTarDegVec,'k');
     for it=1:KInterferenceSources
         yline(ThetaTarInterVec(it),'--');
     end
     %  
-    legend('Riem','Euc','Itersection','SRP-PHAT','Desired','Interferece');%
-    xlabel('Target direction [deg]');
+%      
+    legend('Riem','Euc','Intersection','Desired','Interferece');
+    xlabel('Desired Source direction [deg]');
     % 
     ylabel('[deg]');
     set(gca, 'FontSize', hcfontsize/1.5);

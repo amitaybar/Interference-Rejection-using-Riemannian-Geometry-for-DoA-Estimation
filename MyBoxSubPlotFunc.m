@@ -1,6 +1,6 @@
 function MyBoxSubPlotFunc(Data, Labels, Title,KSubPlots,Groups)
 
-
+set(0,'DefaultTextFontSize',18,'DefaultAxesFontSize',18);
 linewd                  = 0.8;
 hcfontsize              = 20;
 MarkerSize              = 9;

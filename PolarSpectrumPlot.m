@@ -79,6 +79,7 @@ end
 thetalim([0 180])
 % 
 %  
+saveas(gcf,fullfile('results', 'Fig2_BeamPattern.jpg'))
 
 
 %%

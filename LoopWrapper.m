@@ -1,6 +1,6 @@
-close all
-clc
-clear
+% close all
+% clc
+clearvars -except FlagsArray KFlags4Plot CurFlagInd
 %%
 rng(130,'twister');
 
@@ -8,6 +8,10 @@ rng(130,'twister');
 if ~exist('McMatFiles','dir')
     mkdir('McMatFiles');
 end
+if ~exist('results','dir')
+    mkdir('results');
+end
+
 %% Functions
 RoundFunc          = @(x) ( round(x*10)/10 ) ;
 %% Plot Params
@@ -18,41 +22,41 @@ MarkerSize              = 9;
 %%
 tic
 %% Which figures to plot - only one flag should have a logical '1' value
-PlogFigs_1_2_5      = 1;
-PlogFigs_3_4_9      = 0; % Also plots figures 1 2 5
-PlotFigs_7          = 0;
-PlotFigs_8          = 0;
-PlotFigs_6SNR       = 0;
-PlotFigs_6Beta      = 0;
+PlogFigs_1_2_5      = FlagsArray(1);%0;%
+PlogFigs_3_4_10      = FlagsArray(2);%FlagsArray(2); %0;%
+PlotFigs_8          = FlagsArray(3);%FlagsArray(3);
+PlotFigs_9          = FlagsArray(4);%0;%FlagsArray(2);%
+PlotFigs_7SNR       = FlagsArray(5);%0;%
+PlotFigs_7Beta      = FlagsArray(6);%0;%
 %%
 if PlogFigs_1_2_5
     KScenarios      = 1;
     MonteCarloFlag  = 0;
     ScenariosList   = [1 12];
 end
-if PlogFigs_3_4_9  
-    KScenarios      = 200;
+if PlogFigs_3_4_10  
+    KScenarios      = 200;%200;
     MonteCarloFlag  = 0;
     ScenariosList   = [1 12 13];
 end
-if PlotFigs_7  
-    KScenarios      = 200;
+if PlotFigs_8  
+    KScenarios      = 200;%200
     MonteCarloFlag  = 0;
     ScenariosList   = 27;
 end
-if PlotFigs_8  
-    KScenarios      = 200;
+if PlotFigs_9  
+    KScenarios      = 200;%200;
     MonteCarloFlag  = 0;
     ScenariosList   = [20 21];
 end
-if PlotFigs_6SNR     
-    KScenarios   	= 200;
+if PlotFigs_7SNR     
+    KScenarios   	= 200;%200
     MonteCarloFlag  = 1;
     IsMCforBeta     = 0;
     ScenariosList   = [1 12 14];
 end
-if PlotFigs_6Beta     
-    KScenarios   	= 200;
+if PlotFigs_7Beta     
+    KScenarios   	= 200;%200
     MonteCarloFlag  = 1;
     IsMCforBeta     = 1;
     ScenariosList   = [1 12 14];

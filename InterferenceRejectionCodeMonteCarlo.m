@@ -2,7 +2,6 @@
 %%
 
 % 
-addpath(fullfile(pwd,'RIR','RIR-Generator-master'));
 addpath(fullfile(pwd,'STFT'));
 %% Colors definition
 ColorBlueMat    = [ 0    0.4510    0.7412 ;  0.0980    0.5882    0.8902 ; 0.3020    0.7451    0.9604 ;  0.5137    0.8235    0.9882];
@@ -36,7 +35,7 @@ KSignals4MUSIC          = 1;
 TargetGain              = 1;
 InputSir                = 20*log10(TargetGain /mean(InterferenceAmpGain));
 % ----------------noise params------------------------
-Snr_dB                  = 50;
+Snr_dB                  = 20;
 Epsilon                 = 1/10^(Snr_dB / 20);
 %----------------Acoustic Filter length----------------
 KFiltSamples            = 2*BasicSize;
@@ -71,7 +70,7 @@ if IsMCforBeta
     % Epsilon is define earlier
 else % MC for the noise, epsilon
     beta                    = 0.15 ;%                                                              % 
-    EpsilonVec = fliplr(10.^(-([20 30 40 50])/20));
+    EpsilonVec = fliplr(10.^(-([20 30 40 50]-30)/20));
     LoopVec = EpsilonVec;
 end% 
 
@@ -191,7 +190,10 @@ for b=1:length(LoopVec)%
             SigInterAtArrayMatMasked        = SigInterAtArrayMatTrim.*IndicatorBig;
             NoiseVec                        = randn(KSigSamples,1);
             KFactNoise                      = norm(NoiseVec);
-            NoiseVec                        = Epsilon*randn(KSigSamples,1) / KFactNoise; % 
+            KFactSig                        = norm(SigTarAtArray);
+            
+%             NoiseVec                        = Epsilon*randn(KSigSamples,1) / KFactNoise; % 
+            NoiseVec                        = Epsilon*NoiseVec / KFactNoise * KFactSig; 
             
             SigForGammaTimeDomain(MicInd,:) = SigTarAtArray2 + SigTarAtArray + sum(SigInterAtArrayMatMasked,2) + NoiseVec;
             SigForGammaStft                 = stft(SigForGammaTimeDomain(MicInd,:),WinLength);
