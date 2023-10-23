@@ -1,6 +1,8 @@
 This is the code for the paper "On Interference-Rejection using Riemannian Geometry for Direction of Arrival Estimation", A. Bar and R. Talmon
 
-The code requires the RIR simulator to be installed. Please see more details at https://www.audiolabs-erlangen.de/fau/professor/habets/software/rir-generator
+In the SimpleExample folder, there is a simplified example that does not require the RIR simulator.
+
+The code for the paper requires the RIR simulator to be installed. Please see more details at https://www.audiolabs-erlangen.de/fau/professor/habets/software/rir-generator
 
 The code was tested using Matlab 2018b on Windows 10.
 
